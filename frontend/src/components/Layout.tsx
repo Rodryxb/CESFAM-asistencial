@@ -9,6 +9,7 @@ import {
   FlaskConical,
   ImagePlus,
   LayoutDashboard,
+  Lock,
   Menu,
   PackagePlus,
   Pill,
@@ -16,6 +17,7 @@ import {
   ShieldCheck,
   Truck,
   Type,
+  Unlock,
   UserCircle2,
   X,
 } from "lucide-react";
@@ -126,6 +128,9 @@ export const Layout: React.FC<Props> = ({ rol, setRol, vista, setVista, children
   };
 
   const [campanaAbierta, setCampanaAbierta] = useState(false);
+  const [bloqueado, setBloqueado] = useState(false);
+  const [claveInput, setClaveInput] = useState("");
+  const [errorClave, setErrorClave] = useState(false);
 
   // Medicamentos exclusivamente en Stock Crítico (igual al KPI "Quiebres / Stock Crítico")
   const medsCriticos = useMemo(() => {
@@ -466,6 +471,23 @@ export const Layout: React.FC<Props> = ({ rol, setRol, vista, setVista, children
                     </div>
                   </div>
                 </div>
+
+                <div className="h-6 w-px bg-slate-300" aria-hidden />
+
+                {/* Botón de Bloqueo Asistencial de Terminal / Cierre CESFAM */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBloqueado(true);
+                    setClaveInput("");
+                    setErrorClave(false);
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 shadow-xs transition hover:border-[#C4121A] hover:bg-[#FDF2F2] hover:text-[#C4121A]"
+                  title="Bloquear pantalla por cierre de turno o receso asistencial (Ley 19.628 / Seguridad TI)"
+                >
+                  <Lock size={14} className="text-[#C4121A]" aria-hidden />
+                  <span className="hidden sm:inline">Bloquear Pantalla</span>
+                </button>
               </div>
             </div>
           </header>
@@ -490,6 +512,109 @@ export const Layout: React.FC<Props> = ({ rol, setRol, vista, setVista, children
           </div>
         </footer>
       </div>
+
+      {/* MODAL DE BLOQUEO DE PANTALLA ASISTENCIAL (CIERRE CESFAM / RECESO) */}
+      {bloqueado && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Terminal Bloqueado por Cierre o Receso Asistencial"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-md"
+        >
+          <div className="w-full max-w-md rounded-3xl border-2 border-red-500/40 bg-white p-6 shadow-2xl sm:p-8">
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-100 text-[#C4121A] shadow-inner">
+                <Lock size={36} aria-hidden />
+              </div>
+              <span className="inline-block rounded-full bg-red-100 px-3 py-1 text-xs font-black uppercase tracking-wider text-red-800">
+                CESFAM Cerrado / Terminal Bloqueado
+              </span>
+              <h2 className="mt-2 text-xl font-black text-slate-900">
+                Protección de Datos Clínicos
+              </h2>
+              <p className="mt-1.5 text-xs text-slate-600">
+                Sesión suspendida para evitar accesos no autorizados a fichas de pacientes y stock de farmacia (Ley N° 19.628 y Criterio 2.1.5.10).
+              </p>
+            </div>
+
+            {/* Datos del turno suspendido */}
+            <div className="my-5 rounded-2xl border border-slate-200 bg-slate-50 p-3.5 text-xs">
+              <div className="flex justify-between py-0.5">
+                <span className="font-medium text-slate-500">Funcionario en turno:</span>
+                <span className="font-black text-slate-900">{profActual.nombre}</span>
+              </div>
+              <div className="flex justify-between py-0.5">
+                <span className="font-medium text-slate-500">Cargo / Rol:</span>
+                <span className="font-extrabold text-[#C4121A]">{profActual.cargo}</span>
+              </div>
+              <div className="flex justify-between py-0.5">
+                <span className="font-medium text-slate-500">Establecimiento:</span>
+                <span className="font-semibold text-slate-700">{branding.nombreCentro}</span>
+              </div>
+            </div>
+
+            {/* Formulario de Desbloqueo */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                // Acepta "1234", "cesfam", "admin" o presionar Desbloquear para facilitar la demo académica
+                if (
+                  claveInput.trim() === "1234" ||
+                  claveInput.trim().toLowerCase() === "cesfam" ||
+                  claveInput.trim().toLowerCase() === "admin" ||
+                  claveInput.trim() === ""
+                ) {
+                  setBloqueado(false);
+                  setClaveInput("");
+                  setErrorClave(false);
+                } else {
+                  setErrorClave(true);
+                }
+              }}
+              className="space-y-3"
+            >
+              <div>
+                <label htmlFor="input-clave-desbloqueo" className="block text-xs font-bold text-slate-700 mb-1">
+                  Ingrese PIN de Funcionario o Clave:
+                </label>
+                <input
+                  id="input-clave-desbloqueo"
+                  type="password"
+                  value={claveInput}
+                  onChange={(e) => {
+                    setClaveInput(e.target.value);
+                    if (errorClave) setErrorClave(false);
+                  }}
+                  placeholder="PIN (por defecto: 1234 o dejar vacío para demo)"
+                  className={`w-full rounded-xl border px-3.5 py-2.5 text-center text-sm font-black tracking-widest focus:outline-none ${
+                    errorClave
+                      ? "border-red-500 bg-red-50 text-red-900 focus:ring-2 focus:ring-red-400"
+                      : "border-slate-300 bg-white text-slate-900 focus:border-[#C4121A] focus:ring-2 focus:ring-red-200"
+                  }`}
+                  autoFocus
+                />
+                {errorClave && (
+                  <p className="mt-1 text-center text-xs font-bold text-red-600">
+                    PIN incorrecto. (Use 1234 o presione Desbloquear)
+                  </p>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#C4121A] py-2.5 text-sm font-black text-white shadow-md transition hover:bg-[#9E0E15] active:scale-95"
+              >
+                <Unlock size={16} aria-hidden />
+                Desbloquear y Reanudar Turno
+              </button>
+
+              <p className="text-center text-[11px] text-slate-400">
+                Simulación asistencial para recesos, cambio de turno y cierre de CESFAM.
+              </p>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
