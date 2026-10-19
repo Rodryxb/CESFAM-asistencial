@@ -128,9 +128,33 @@ export const Layout: React.FC<Props> = ({ rol, setRol, vista, setVista, children
   };
 
   const [campanaAbierta, setCampanaAbierta] = useState(false);
-  const [bloqueado, setBloqueado] = useState(false);
+  const [bloqueado, setBloqueado] = useState(true);
   const [claveInput, setClaveInput] = useState("");
   const [errorClave, setErrorClave] = useState(false);
+
+  // Auto-bloqueo asistencial por inactividad tras 5 minutos (300.000 ms)
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+
+    const resetTimer = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        setBloqueado(true);
+        setClaveInput("");
+        setErrorClave(false);
+      }, 5 * 60 * 1000); // 5 minutos exactos
+    };
+
+    const eventos = ["mousemove", "mousedown", "keydown", "touchstart", "scroll"];
+    eventos.forEach((evt) => window.addEventListener(evt, resetTimer));
+
+    resetTimer();
+
+    return () => {
+      clearTimeout(timer);
+      eventos.forEach((evt) => window.removeEventListener(evt, resetTimer));
+    };
+  }, []);
 
   // Medicamentos exclusivamente en Stock Crítico (igual al KPI "Quiebres / Stock Crítico")
   const medsCriticos = useMemo(() => {
@@ -557,13 +581,8 @@ export const Layout: React.FC<Props> = ({ rol, setRol, vista, setVista, children
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                // Acepta "1234", "cesfam", "admin" o presionar Desbloquear para facilitar la demo académica
-                if (
-                  claveInput.trim() === "1234" ||
-                  claveInput.trim().toLowerCase() === "cesfam" ||
-                  claveInput.trim().toLowerCase() === "admin" ||
-                  claveInput.trim() === ""
-                ) {
+                // Exige estrictamente el PIN 1234
+                if (claveInput.trim() === "1234") {
                   setBloqueado(false);
                   setClaveInput("");
                   setErrorClave(false);
@@ -575,17 +594,18 @@ export const Layout: React.FC<Props> = ({ rol, setRol, vista, setVista, children
             >
               <div>
                 <label htmlFor="input-clave-desbloqueo" className="block text-xs font-bold text-slate-700 mb-1">
-                  Ingrese PIN de Funcionario o Clave:
+                  Ingrese PIN de Funcionario (4 dígitos):
                 </label>
                 <input
                   id="input-clave-desbloqueo"
                   type="password"
+                  maxLength={4}
                   value={claveInput}
                   onChange={(e) => {
                     setClaveInput(e.target.value);
                     if (errorClave) setErrorClave(false);
                   }}
-                  placeholder="PIN (por defecto: 1234 o dejar vacío para demo)"
+                  placeholder="Ingrese PIN: 1234"
                   className={`w-full rounded-xl border px-3.5 py-2.5 text-center text-sm font-black tracking-widest focus:outline-none ${
                     errorClave
                       ? "border-red-500 bg-red-50 text-red-900 focus:ring-2 focus:ring-red-400"
@@ -595,7 +615,7 @@ export const Layout: React.FC<Props> = ({ rol, setRol, vista, setVista, children
                 />
                 {errorClave && (
                   <p className="mt-1 text-center text-xs font-bold text-red-600">
-                    PIN incorrecto. (Use 1234 o presione Desbloquear)
+                    PIN incorrecto. Ingrese el código de seguridad 1234.
                   </p>
                 )}
               </div>
