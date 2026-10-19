@@ -1,0 +1,27 @@
+{
+  "name": "cesfam-farmacia-asistencial-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Frontend React + TypeScript para el Sistema Web de Gestión de Farmacia Asistencial CESFAM (Red Pública MINSAL)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lucide-react": "^1.59.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "autoprefixer": "^10.6.1",
+    "postcss": "^8.5.31",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10"
+  }
+}

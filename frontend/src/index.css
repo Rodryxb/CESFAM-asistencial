@@ -1,0 +1,258 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tamaño de letra accesible: base mínima 16px; modo "Grande" 19px (todo en rem escala) */
+html {
+  font-size: 16px;
+}
+html.fuente-grande {
+  font-size: 19px;
+}
+
+body {
+  background: #f8fafc;
+  color: #0f172a;
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+}
+
+:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 2px;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold min-h-[48px] transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply btn bg-[#C4121A] text-white hover:bg-[#9E0E15];
+  }
+  .btn-secondary {
+    @apply btn bg-white text-[#C4121A] border-2 border-[#C4121A] hover:bg-[#FDE8E8];
+  }
+  .btn-danger {
+    @apply btn bg-red-700 text-white hover:bg-red-800;
+  }
+  .card {
+    @apply bg-white rounded-2xl border border-slate-200 shadow-sm p-5;
+  }
+  .input {
+    @apply w-full rounded-xl border-2 border-slate-300 px-4 py-3 min-h-[48px] focus:border-[#C4121A];
+  }
+}
+
+/* ============================================================================
+   MODO ALTO CONTRASTE INSTITUCIONAL (WCAG AAA - CERO ERRORES DE LEGIBILIDAD)
+   Fondo oscuro uniforme (#090D16 / #000000), textos blancos (#FFFFFF) y
+   acentos amarillos de alta visibilidad (#FFE600).
+   ============================================================================ */
+html.alto-contraste body,
+html.alto-contraste #root > div {
+  background: #090d16 !important;
+  color: #ffffff !important;
+}
+
+/* Topbar, Footer, Hoja Clínica, Tarjetas y Bloques con colores personalizados */
+html.alto-contraste header,
+html.alto-contraste footer,
+html.alto-contraste main > div,
+html.alto-contraste .card,
+html.alto-contraste .bg-white,
+html.alto-contraste [class*="bg-white/"],
+html.alto-contraste .bg-fondo,
+html.alto-contraste [class*="bg-slate-"],
+html.alto-contraste [class*="bg-sky-"],
+html.alto-contraste [class*="bg-cyan-"],
+html.alto-contraste [class*="bg-purple-"],
+html.alto-contraste [class*="bg-[#"] {
+  background-color: #0f1624 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border-color: #ffe600 !important;
+}
+
+/* Sidebar izquierdo en alto contraste */
+html.alto-contraste aside {
+  background-color: #050811 !important;
+  border-right: 2px solid #ffe600 !important;
+}
+
+/* Cabeceras de tablas y filas */
+html.alto-contraste thead tr,
+html.alto-contraste thead th {
+  background-color: #1e293b !important;
+  color: #ffe600 !important;
+  border-bottom: 2px solid #ffe600 !important;
+}
+
+html.alto-contraste tbody tr,
+html.alto-contraste tbody td {
+  background-color: #090d16 !important;
+  color: #ffffff !important;
+  border-color: #475569 !important;
+}
+
+/* Tarjetas de estado (Verde / Amarillo / Rojo) en Alto Contraste */
+html.alto-contraste [class*="bg-emerald-"],
+html.alto-contraste [class*="bg-green-"],
+html.alto-contraste [class*="bg-amber-"],
+html.alto-contraste [class*="bg-red-"],
+html.alto-contraste [class*="bg-blue-"],
+html.alto-contraste .bg-minsal,
+html.alto-contraste .bg-minsal-dark,
+html.alto-contraste .bg-minsal-light {
+  background-color: #050811 !important;
+  background-image: none !important;
+  color: #ffe600 !important;
+  border: 2px solid #ffe600 !important;
+}
+
+/* Garantizar que NINGÚN texto quede oscuro sobre fondo negro */
+html.alto-contraste h1,
+html.alto-contraste h2,
+html.alto-contraste h3,
+html.alto-contraste h4,
+html.alto-contraste strong {
+  color: #ffe600 !important;
+}
+
+html.alto-contraste p,
+html.alto-contraste span,
+html.alto-contraste li,
+html.alto-contraste dt,
+html.alto-contraste dd,
+html.alto-contraste label,
+html.alto-contraste [class*="text-slate"],
+html.alto-contraste [class*="text-minsal"],
+html.alto-contraste [class*="text-[#"],
+html.alto-contraste [class*="text-emerald-"],
+html.alto-contraste [class*="text-green-"],
+html.alto-contraste [class*="text-amber-"],
+html.alto-contraste [class*="text-red-"],
+html.alto-contraste [class*="text-sky-"],
+html.alto-contraste [class*="text-purple-"],
+html.alto-contraste [class*="text-cyan-"] {
+  color: #ffffff !important;
+}
+
+/* Excepción para botones amarillos activos que deben tener texto negro para contrastar */
+html.alto-contraste .bg-yellow-300,
+html.alto-contraste .bg-yellow-300 span {
+  background-color: #ffe600 !important;
+  color: #000000 !important;
+  border-color: #ffffff !important;
+}
+
+/* Inputs, Selects y Textareas en Alto Contraste */
+html.alto-contraste input,
+html.alto-contraste select,
+html.alto-contraste textarea,
+html.alto-contraste .input {
+  background-color: #000000 !important;
+  color: #ffe600 !important;
+  border: 2px solid #ffe600 !important;
+}
+
+html.alto-contraste input::placeholder,
+html.alto-contraste textarea::placeholder {
+  color: #cbd5e1 !important;
+}
+
+/* Barras del gráfico semanal visibles en alto contraste */
+html.alto-contraste [role="img"] div[style*="height"] {
+  background: #ffe600 !important;
+  border: 1px solid #ffffff !important;
+}
+
+/* Botones en Alto Contraste */
+html.alto-contraste button {
+  border-color: #ffe600 !important;
+}
+
+/* ============================================================================
+   ESTILOS DE IMPRESIÓN OFICIAL: COMPROBANTE DE DISPENSACIÓN ASISTENCIAL (CESFAM)
+   Oculta toda la navegación, barra lateral y pantallas para imprimir únicamente
+   el documento formal de entrega a pacientes.
+   ============================================================================ */
+@media print {
+  @page {
+    size: letter portrait;
+    margin: 10mm 12mm;
+  }
+
+  /* Ocultar interfaz web y elementos interactivos */
+  aside,
+  header,
+  footer,
+  nav,
+  button,
+  .no-print,
+  .pantalla-no-imprimir,
+  [role="toolbar"],
+  [aria-label="Ayuda rápida"],
+  [role="status"] {
+    display: none !important;
+  }
+
+  body,
+  html,
+  #root,
+  #root > div {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10pt !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+  }
+
+  main > div {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #ffffff !important;
+  }
+
+  /* Mostrar exclusivamente el comprobante oficial */
+  .comprobante-oficial-print {
+    display: block !important;
+    visibility: visible !important;
+    position: static !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    color: #000000 !important;
+    background: #ffffff !important;
+    page-break-inside: avoid;
+  }
+
+  .comprobante-oficial-print * {
+    color: #000000 !important;
+    border-color: #000000 !important;
+    background-color: transparent !important;
+  }
+
+  .comprobante-oficial-print table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  .comprobante-oficial-print th,
+  .comprobante-oficial-print td {
+    border: 1px solid #333333 !important;
+    padding: 4px 6px !important;
+  }
+}
